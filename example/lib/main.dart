@@ -63,10 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 isFormValidator: true, // optional
 
                 width: 10, // optional
-                // is24format: true,
-                selectedAmPm: _selectedAmPm, // optional
-                selectedMins: _selectedMins, // optional
-                selectedHours: _selectedHours, // optional
+                is24format: true,
+                // selectedAmPm: _selectedAmPm, // optional
+                // selectedMins: _selectedMins, // optional
+                // selectedHours: _selectedHours, // optional
                 onChangedAmPm: (value) {
                   _selectedAmPm = value!;
                   print('onChangedDay: $value');
@@ -81,12 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 //boxDecoration: BoxDecoration(
                 // border: Border.all(color: Colors.grey, width: 1.0)), // optional
-                // showDay: false,// optional
-                // dayFlex: 2,// optional
-                // locale: "zh_CN",// optional
-                // hintDay: 'Day', // optional
-                // hintMonth: 'Month', // optional
-                // hintYear: 'Year', // optional
+
                 // hintTextStyle: TextStyle(color: Colors.grey), // optional
               ),
               MaterialButton(
