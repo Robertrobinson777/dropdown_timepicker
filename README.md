@@ -21,9 +21,9 @@ A Dropdown Time picker for Flutter with customizable options.
 
 <p float="left">
 
-<img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_date_picker/main/SCR-12.png" alt="Main View" width="200"/>
-<img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_date_picker/main/SCR-24.png" alt="monthview" width="200"/>
-<img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_date_picker/main/SCR-24error.png" alt="dateview" width="200"/>
+<img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_timepicker/main/SCR-12.png" alt="Main View" width="200"/>
+<img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_timepicker/main/SCR-24.png" alt="monthview" width="200"/>
+<img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_timepicker/main/SCR-24error.png" alt="dateview" width="200"/>
 </p>
 
 ## Getting started
