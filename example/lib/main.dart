@@ -12,10 +12,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Dropdown TimePicker Demo',
+      themeMode: ThemeMode.system,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        /* light theme settings */
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        /* dark theme settings */
+      ),
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(title: 'Dropdwon Time picker Demo'),
+      home: const MyHomePage(title: 'Dropdwon Time picker Demo'),
     );
   }
 }
@@ -51,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               DropdownTimePicker(
+                isExpanded: true,
                 // inputDecoration: InputDecoration(
                 //     enabledBorder: const OutlineInputBorder(
                 //       borderSide: BorderSide(color: Colors.grey, width: 1.0),
@@ -61,23 +71,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 //         borderRadius: BorderRadius.circular(10))), // optional
                 isDropdownHideUnderline: true, // optional
                 isFormValidator: true, // optional
-
+                showAmPm: true,
                 width: 10, // optional
-                is24format: true,
+                is24format: false,
                 // selectedAmPm: _selectedAmPm, // optional
                 // selectedMins: _selectedMins, // optional
                 // selectedHours: _selectedHours, // optional
                 onChangedAmPm: (value) {
-                  _selectedAmPm = value!;
-                  print('onChangedDay: $value');
+                  setState(() {
+                    _selectedAmPm = value ?? 'AM';
+                  });
+                  print('onChangedAM: $value');
                 },
                 onChangedMins: (value) {
-                  _selectedMins = int.parse(value!);
-                  print('onChangedMonth: $value');
+                  setState(() {
+                    _selectedMins = int.parse(value ?? '10');
+                  });
+                  print('onChangedMins: $value');
                 },
                 onChangedHours: (value) {
-                  _selectedHours = int.parse(value!);
-                  print('onChangedYear: $value');
+                  setState(() {
+                    _selectedHours = int.parse(value ?? '1');
+                  });
+                  print('onChangedHours: $value');
                 },
                 //boxDecoration: BoxDecoration(
                 // border: Border.all(color: Colors.grey, width: 1.0)), // optional

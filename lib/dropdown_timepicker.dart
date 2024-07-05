@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'list_time.dart';
 
+// ignore: must_be_immutable
 class DropdownTimePicker extends StatefulWidget {
   ///DropDown select text style
   final TextStyle? textStyle;
@@ -146,24 +147,23 @@ class _DropdownTimePickerState extends State<DropdownTimePicker> {
   @override
   void initState() {
     super.initState();
+    // Initialize the list of hours based on the format
     listOfHours = widget.is24format ? list24Hours : listHours;
 
-    ampmSelVal =
-        widget.selectedAmPm != null ? widget.selectedAmPm.toString() : '';
-    minSelVal =
-        widget.selectedMins != null ? widget.selectedMins.toString() : '';
-    hourSelVal =
-        widget.selectedHours != null ? widget.selectedHours.toString() : '';
+    // Set the selected values for ampm, mins, and hours
+    ampmSelVal = widget.selectedAmPm?.toString() ?? '';
+    minSelVal = widget.selectedMins?.toString() ?? '';
+    hourSelVal = widget.selectedHours?.toString() ?? '';
   }
 
   ///Mins selection dropdown function
-  minSelected(value) {
+  void minSelected(value) {
     widget.onChangedMins!(value);
     minSelVal = value;
-
     update();
   }
 
+  /// Check if the selected date is valid and update the state accordingly
   void checkDates(ampms) {
     // Check if the selected date is not null
     if (minSelVal != '') {
@@ -177,21 +177,21 @@ class _DropdownTimePickerState extends State<DropdownTimePicker> {
     }
   }
 
-  ampmsSelected(value) {
+  /// Handle the selection of ampm dropdown
+  void ampmsSelected(value) {
     widget.onChangedAmPm!(value);
-
     update();
   }
 
-  hoursSelected(value) {
+  /// Handle the selection of hours dropdown
+  void hoursSelected(value) {
     widget.onChangedHours!(value);
     hourSelVal = value;
-
     update();
   }
 
-  ///update function
-  update() {
+  /// Update the state to trigger a rebuild of the widget
+  void update() {
     setState(() {});
   }
 
@@ -205,7 +205,6 @@ class _DropdownTimePickerState extends State<DropdownTimePicker> {
             child: Container(
               decoration: widget.boxDecoration ?? const BoxDecoration(),
               child: SizedBox(
-                // height: 49,
                 child: ButtonTheme(
                   alignedDropdown: true,
                   child: widget.isDropdownHideUnderline
@@ -224,7 +223,6 @@ class _DropdownTimePickerState extends State<DropdownTimePicker> {
             child: Container(
               decoration: widget.boxDecoration ?? const BoxDecoration(),
               child: SizedBox(
-                  // height: 49,
                   child: ButtonTheme(
                 alignedDropdown: true,
                 child: widget.isDropdownHideUnderline
@@ -242,7 +240,6 @@ class _DropdownTimePickerState extends State<DropdownTimePicker> {
             child: Container(
               decoration: widget.boxDecoration ?? const BoxDecoration(),
               child: SizedBox(
-                // height: 49,
                 child: ButtonTheme(
                   alignedDropdown: true,
                   child: widget.isDropdownHideUnderline
@@ -258,41 +255,41 @@ class _DropdownTimePickerState extends State<DropdownTimePicker> {
     );
   }
 
-  ///min dropdown
+  /// Dropdown for selecting minutes
   DropdownButtonFormField<String> minDropdown() {
     return DropdownButtonFormField<String>(
-        decoration: widget.inputDecoration ??
-            (widget.isDropdownHideUnderline ? removeUnderline() : null),
-        isExpanded: widget.isExpanded,
-        hint: Text(widget.hintMins, style: widget.hintTextStyle),
-        icon: widget.icon ?? const Icon(Icons.expand_more, color: Colors.grey),
-        value: minSelVal == '' ? null : minSelVal,
-        onChanged: (value) {
-          minSelected(value);
-        },
-        validator: (value) {
-          return widget.isFormValidator
-              ? value == null
-                  ? widget.errorMins
-                  : null
-              : null;
-        },
-        items: listMins.map((item) {
-          return DropdownMenuItem<String>(
-            value: item.toString(),
-            child: Text(
-              item.toString(),
-              style: widget.textStyle ??
-                  const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black),
-            ),
-          );
-        }).toList());
+      decoration: widget.inputDecoration ??
+          (widget.isDropdownHideUnderline ? removeUnderline() : null),
+      isExpanded: widget.isExpanded,
+      hint: Text(widget.hintMins, style: widget.hintTextStyle),
+      icon: widget.icon ?? const Icon(Icons.expand_more, color: Colors.grey),
+      value: minSelVal == '' ? null : minSelVal,
+      onChanged: (value) {
+        minSelected(value);
+      },
+      validator: (value) {
+        return widget.isFormValidator && value == null
+            ? widget.errorMins
+            : null;
+      },
+      items: listMins.map((item) {
+        return DropdownMenuItem<String>(
+          value: item.toString(),
+          child: Text(
+            item.toString(),
+            style: widget.textStyle ??
+                const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
-  ///Remove underline from dropdown
+  /// This function removes the underline from the dropdown by customizing the input decoration.
+  /// It returns an instance of InputDecoration with the enabled border set to an UnderlineInputBorder with white color.
   InputDecoration removeUnderline() {
     return const InputDecoration(
         enabledBorder:
@@ -302,67 +299,61 @@ class _DropdownTimePickerState extends State<DropdownTimePicker> {
   ///hour dropdown
   DropdownButtonFormField<String> hourDropdown() {
     return DropdownButtonFormField<String>(
-        decoration: widget.inputDecoration ??
-            (widget.isDropdownHideUnderline ? removeUnderline() : null),
-        hint: Text(widget.hintHours, style: widget.hintTextStyle),
-        isExpanded: widget.isExpanded,
-        icon: widget.icon ?? const Icon(Icons.expand_more, color: Colors.grey),
-        value: hourSelVal == '' ? null : hourSelVal,
-        onChanged: (value) {
-          hoursSelected(value);
-        },
-        validator: (value) {
-          return widget.isFormValidator
-              ? value == null
-                  ? widget.errorHours
-                  : null
-              : null;
-        },
-        items: listOfHours.map((item) {
-          return DropdownMenuItem<String>(
-            value: item.toString(),
-            child: Text(
-              item.toString(),
-              style: widget.textStyle ??
-                  const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black),
-            ),
-          );
-        }).toList());
+      decoration: widget.inputDecoration ??
+          (widget.isDropdownHideUnderline ? removeUnderline() : null),
+      hint: Text(widget.hintHours, style: widget.hintTextStyle),
+      isExpanded: widget.isExpanded,
+      icon: widget.icon ?? const Icon(Icons.expand_more, color: Colors.grey),
+      value: hourSelVal == '' ? null : hourSelVal,
+      onChanged: (value) {
+        hoursSelected(value);
+      },
+      validator: (value) {
+        return widget.isFormValidator && value == null
+            ? widget.errorHours
+            : null;
+      },
+      items: listOfHours.map((item) {
+        return DropdownMenuItem<String>(
+          value: item.toString(),
+          child: Text(
+            item.toString(),
+            style: widget.textStyle ??
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   ///ampm dropdown
   DropdownButtonFormField<String> ampmDropdown() {
     return DropdownButtonFormField<String>(
-        decoration: widget.inputDecoration ??
-            (widget.isDropdownHideUnderline ? removeUnderline() : null),
-        hint: Text(widget.hintAmPm, style: widget.hintTextStyle),
-        isExpanded: widget.isExpanded,
-        icon: widget.icon ?? const Icon(Icons.expand_more, color: Colors.grey),
-        value: ampmSelVal == '' ? null : ampmSelVal,
-        onChanged: (value) {
-          ampmsSelected(value);
-        },
-        validator: (value) {
-          return widget.isFormValidator
-              ? value == null
-                  ? widget.errorAmPm
-                  : null
-              : null;
-        },
-        items: listAmPm.map((item) {
-          return DropdownMenuItem<String>(
-            value: item.toString(),
-            child: Text(item.toString(),
-                style: widget.textStyle ??
-                    const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black)),
-          );
-        }).toList());
+      decoration: widget.inputDecoration ??
+          (widget.isDropdownHideUnderline ? removeUnderline() : null),
+      hint: Text(widget.hintAmPm, style: widget.hintTextStyle),
+      isExpanded: widget.isExpanded,
+      icon: widget.icon ?? const Icon(Icons.expand_more, color: Colors.grey),
+      value: ampmSelVal == '' ? null : ampmSelVal,
+      onChanged: (value) {
+        ampmsSelected(value);
+      },
+      validator: (value) {
+        return widget.isFormValidator && value == null
+            ? widget.errorAmPm
+            : null;
+      },
+      items: listAmPm.map((item) {
+        return DropdownMenuItem<String>(
+          value: item.toString(),
+          child: Text(
+            item.toString(),
+            style: widget.textStyle ??
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   /* This code creates a blank space that is count pixels wide. */
