@@ -13,9 +13,9 @@ and the Flutter guide for
 
 
 ## Dropdown TimePicker 
-[![Pub](https://img.shields.io/badge/pub-v0.0.1-green)](https://pub.dev/packages/dropdown_timepicker)
+[![Pub](https://img.shields.io/badge/pub-v0.1.0-green)](https://pub.dev/packages/dropdown_timepicker)
 
-A Dropdown Time picker for Flutter with customizable options.
+A Dropdown Time picker for Flutter with customizable options. web demo [https://timepicker.robertrobinson.in/](https://timepicker.robertrobinson.in/)
 
 ## Features
 

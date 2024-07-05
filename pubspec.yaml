@@ -1,6 +1,6 @@
 name: dropdown_timepicker
 description: "A Dropdown Time Picker for Flutter with customizable options."
-version: 0.0.1
+version: 0.1.0
 homepage: https://robertrobinson.in/
 repository: https://github.com/Robertrobinson777/dropdown_timepicker
 issue_tracker: https://github.com/Robertrobinson777/dropdown_timepicker/issues
