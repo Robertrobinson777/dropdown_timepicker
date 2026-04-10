@@ -1,82 +1,127 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Dropdown TimePicker
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+[![Pub Version](https://img.shields.io/badge/pub-1.0.0-brightgreen)](https://pub.dev/packages/dropdown_timepicker)
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+`dropdown_timepicker` is a dropdown-based time picker for Flutter forms. It supports 12-hour and 24-hour layouts, optional field visibility, custom styling, and built-in validation.
 
+## Highlights
 
-## Dropdown TimePicker 
-[![Pub](https://img.shields.io/badge/pub-v0.1.0-green)](https://pub.dev/packages/dropdown_timepicker)
+- 12-hour and 24-hour time selection
+- Configurable hour range with `startHours` and `endHours`
+- Optional hours, minutes, and AM/PM dropdowns
+- Safe handling of invalid initial values
+- Form validation support with custom error messages
+- Example app included in the repository
 
-A Dropdown Time picker for Flutter with customizable options. web demo [https://timepicker.robertrobinson.in/](https://timepicker.robertrobinson.in/)
-
-## Features
+## Preview
 
 <p float="left">
-
-<img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_timepicker/main/SCR-12.png" alt="Main View" width="200"/>
-<img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_timepicker/main/SCR-24.png" alt="monthview" width="200"/>
-<img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_timepicker/main/SCR-24error.png" alt="dateview" width="200"/>
+  <img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_timepicker/main/SCR-12.png" alt="12-hour dropdown time picker" width="200"/>
+  <img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_timepicker/main/SCR-24.png" alt="24-hour dropdown time picker" width="200"/>
+  <img src="https://raw.githubusercontent.com/Robertrobinson777/dropdown_timepicker/main/SCR-24error.png" alt="Dropdown time picker validation" width="200"/>
 </p>
 
-## Getting started
+## Installation
 
-```dart
-DropdownTimePicker()
+Add the package to `pubspec.yaml`:
+
+```yaml
+dependencies:
+  dropdown_timepicker: ^1.0.0
 ```
 
-## Usage
+Then run:
 
-For more [Example](https://github.com/Robertrobinson777/dropdown_timepicker/tree/master/example)
-
-```dart
-   DropdownTimePicker(
-                // inputDecoration: InputDecoration(
-                //     enabledBorder: const OutlineInputBorder(
-                //       borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                //     ),
-                //     helperText: '',
-                //     contentPadding: const EdgeInsets.all(8),
-                //     border: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(10))), // optional
-                isDropdownHideUnderline: true, // optional
-                isFormValidator: true, // optional
-
-                width: 10, // optional
-                // is24format: true,
-                selectedAmPm: _selectedAmPm, // optional
-                selectedMins: _selectedMins, // optional
-                selectedHours: _selectedHours, // optional
-                onChangedAmPm: (value) {
-                  _selectedAmPm = value!;
-                  print('onChangedAmPm: $value');
-                },
-                onChangedMins: (value) {
-                  _selectedMins = int.parse(value!);
-                  print('onChangedMins $value');
-                },
-                onChangedHours: (value) {
-                  _selectedHours = int.parse(value!);
-                  print('onChangedHours: $value');
-                },
-                //boxDecoration: BoxDecoration(
-                // border: Border.all(color: Colors.grey, width: 1.0)), // optional
-
-                // hintTextStyle: TextStyle(color: Colors.grey), // optional
-              ),
+```bash
+flutter pub get
 ```
 
-## GitHub source code
+## Basic Usage
 
-If you're interested on the code (feel free to modify it anyway you want), you can find it here: [https://github.com/Robertrobinson777/dropdown_timepicker](https://github.com/Robertrobinson777/dropdown_timepicker)
+```dart
+DropdownTimePicker(
+  onChangedHours: (value) {
+    debugPrint('Hours: $value');
+  },
+  onChangedMins: (value) {
+    debugPrint('Minutes: $value');
+  },
+  onChangedAmPm: (value) {
+    debugPrint('AM/PM: $value');
+  },
+)
+```
 
-## Support
+## Example With Validation
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/robertrobinsonr)
+```dart
+final formKey = GlobalKey<FormState>();
+
+Form(
+  key: formKey,
+  child: DropdownTimePicker(
+    isFormValidator: true,
+    isDropdownHideUnderline: true,
+    selectedHours: 9,
+    selectedMins: 30,
+    selectedAmPm: 'AM',
+    onChangedHours: (value) {
+      debugPrint('Hours: $value');
+    },
+    onChangedMins: (value) {
+      debugPrint('Minutes: $value');
+    },
+    onChangedAmPm: (value) {
+      debugPrint('AM/PM: $value');
+    },
+  ),
+)
+```
+
+## Common Configurations
+
+### 24-hour mode
+
+```dart
+const DropdownTimePicker(
+  is24format: true,
+  selectedHours: 18,
+  selectedMins: 45,
+)
+```
+
+### Limit the available hours
+
+```dart
+const DropdownTimePicker(
+  startHours: 9,
+  endHours: 17,
+)
+```
+
+### Hide specific selectors
+
+```dart
+const DropdownTimePicker(
+  showAmPm: false,
+  showMins: false,
+)
+```
+
+## Notes
+
+- In 12-hour mode, valid hour values are `1..12`.
+- In 24-hour mode, valid hour values are `0..23`.
+- Invalid initial values are ignored instead of causing runtime issues.
+- `showAmPm` is ignored automatically when `is24format` is `true`.
+
+## Example App
+
+The example project lives in the repository at [example](https://github.com/Robertrobinson777/dropdown_timepicker/tree/main/example).
+
+## Source and Support
+
+- Repository: [github.com/Robertrobinson777/dropdown_timepicker](https://github.com/Robertrobinson777/dropdown_timepicker)
+- Issues: [github.com/Robertrobinson777/dropdown_timepicker/issues](https://github.com/Robertrobinson777/dropdown_timepicker/issues)
+- Web demo: [timepicker.robertrobinson.in](https://timepicker.robertrobinson.in/)
+- Support: [Buy Me a Coffee](https://www.buymeacoffee.com/robertrobinsonr)

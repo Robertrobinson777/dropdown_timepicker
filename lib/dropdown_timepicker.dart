@@ -1,361 +1,415 @@
-library dropdown_timepicker;
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
 import 'list_time.dart';
 
-// ignore: must_be_immutable
+/// A configurable dropdown-based time picker for Flutter forms.
+///
+/// The widget supports both 12-hour and 24-hour layouts and can show or hide
+/// the hours, minutes, and AM/PM selectors independently.
 class DropdownTimePicker extends StatefulWidget {
-  ///DropDown select text style
+  /// Creates a dropdown-based time picker.
+  const DropdownTimePicker({
+    super.key,
+    this.textStyle,
+    this.boxDecoration,
+    this.inputDecoration,
+    this.icon,
+    this.startHours,
+    this.endHours,
+    this.width = 12.0,
+    this.onChangedAmPm,
+    this.onChangedMins,
+    this.onChangedHours,
+    this.isDropdownHideUnderline = false,
+    this.errorAmPm = 'Please select AM/PM',
+    this.errorMins = 'Please select minutes',
+    this.errorHours = 'Please select hours',
+    this.hintMins = 'Mins',
+    this.hintAmPm = 'AM/PM',
+    this.hintHours = 'Hours',
+    this.hintTextStyle,
+    this.isFormValidator = false,
+    this.isExpanded = true,
+    this.selectedAmPm,
+    this.selectedMins,
+    this.selectedHours,
+    this.is24format = false,
+    this.showAmPm = true,
+    this.showMins = true,
+    this.showHours = true,
+    this.minFlex = 2,
+    this.ampmFlex = 1,
+    this.hourFlex = 2,
+  });
+
+  /// Text style used by dropdown items and selected values.
   final TextStyle? textStyle;
 
-  ///DropDown container box decoration
+  /// Decoration applied around each dropdown container.
   final BoxDecoration? boxDecoration;
 
-  ///InputDecoration for DropDown
+  /// Input decoration applied to each dropdown form field.
   final InputDecoration? inputDecoration;
 
-  ///DropDown expand icon
+  /// Optional dropdown icon.
   final Icon? icon;
 
-  ///Start hour for date picker
-  ///Default is 1900
+  /// Inclusive starting hour for the hours dropdown.
+  ///
+  /// In 12-hour mode valid values are `1..12`.
+  /// In 24-hour mode valid values are `0..23`.
   final int? startHours;
 
-  ///End hour for date picker
-  ///Default is Current hour
+  /// Inclusive ending hour for the hours dropdown.
+  ///
+  /// In 12-hour mode valid values are `1..12`.
+  /// In 24-hour mode valid values are `0..23`.
   final int? endHours;
 
-  ///width between each drop down
-  ///Default is 12.0
+  /// Horizontal spacing between visible dropdowns.
   final double width;
 
-  ///Return selected Am/Pm
-  ValueChanged<String?>? onChangedAmPm;
+  /// Called when the AM/PM dropdown changes.
+  final ValueChanged<String?>? onChangedAmPm;
 
-  ///Return selected Mins
-  ValueChanged<String?>? onChangedMins;
+  /// Called when the minutes dropdown changes.
+  final ValueChanged<String?>? onChangedMins;
 
-  ///Return selected Hours
-  ValueChanged<String?>? onChangedHours;
+  /// Called when the hours dropdown changes.
+  final ValueChanged<String?>? onChangedHours;
 
-  ///Error message for Date
-  String errorAmPm;
+  /// Validation message shown when AM/PM is required.
+  final String errorAmPm;
 
-  ///Error message for Mins
-  String errorMins;
+  /// Validation message shown when minutes are required.
+  final String errorMins;
 
-  ///Error message for Hours
-  String errorHours;
+  /// Validation message shown when hours are required.
+  final String errorHours;
 
-  ///Hint for Mins drop down
-  ///Default is "Mins"
-  String hintMins;
+  /// Hint shown for the minutes dropdown.
+  final String hintMins;
 
-  ///Hint for Hours drop down
-  ///Default is "Hours"
-  String hintHours;
+  /// Hint shown for the hours dropdown.
+  final String hintHours;
 
-  ///Hint for AmPm drop down
-  ///Default is "AmPm"
-  String hintAmPm;
+  /// Hint shown for the AM/PM dropdown.
+  final String hintAmPm;
 
-  ///Hint Textstyle for drop down
-  TextStyle? hintTextStyle;
+  /// Hint text style for each dropdown.
+  final TextStyle? hintTextStyle;
 
-  ///Is Form validator enabled
-  ///Default is false
+  /// Whether validators should require visible dropdowns to have a value.
   final bool isFormValidator;
 
-  ///Is Expanded for dropdown
-  ///Default is true
+  /// Whether dropdowns should take up the available width.
   final bool isExpanded;
 
-  ///Selected AmPm between am and pm
+  /// Initial or externally controlled AM/PM value.
   final String? selectedAmPm;
 
-  ///Selected Mins between 0 to 60
+  /// Initial or externally controlled minutes value.
   final int? selectedMins;
 
-  ///Selected Hours between 0 and 12
+  /// Initial or externally controlled hours value.
   final int? selectedHours;
 
-  ///Default [isDropdownHideUnderline] = false. Wrap with DropdownHideUnderline for the dropdown to hide the underline.
+  /// Whether the underline should be hidden.
   final bool isDropdownHideUnderline;
 
-  /// default true
-  bool showHours;
-  bool showMins;
-  bool showAmPm;
+  /// Whether the hours dropdown should be visible.
+  final bool showHours;
 
-  /// min expanded flex
-  int minFlex;
+  /// Whether the minutes dropdown should be visible.
+  final bool showMins;
 
-  /// ampm expanded flex
-  int ampmFlex;
+  /// Whether the AM/PM dropdown should be visible in 12-hour mode.
+  final bool showAmPm;
 
-  /// hour expanded flex
-  int hourFlex;
+  /// Flex for the minutes dropdown.
+  final int minFlex;
 
-  /// is 24 format
-  bool is24format;
+  /// Flex for the AM/PM dropdown.
+  final int ampmFlex;
 
-  DropdownTimePicker(
-      {super.key,
-      this.textStyle,
-      this.boxDecoration,
-      this.inputDecoration,
-      this.icon,
-      this.startHours,
-      this.endHours,
-      this.width = 12.0,
-      this.onChangedAmPm,
-      this.onChangedMins,
-      this.onChangedHours,
-      this.isDropdownHideUnderline = false,
-      this.errorAmPm = 'Please select ampm',
-      this.errorMins = 'Please select min',
-      this.errorHours = 'Please select hour',
-      this.hintMins = 'Mins',
-      this.hintAmPm = 'AmPm',
-      this.hintHours = 'Hours',
-      this.hintTextStyle,
-      this.isFormValidator = false,
-      this.isExpanded = true,
-      this.selectedAmPm,
-      this.selectedMins,
-      this.selectedHours,
-      this.is24format = false,
-      this.showAmPm = true,
-      this.showMins = true,
-      this.showHours = true,
-      this.minFlex = 2,
-      this.ampmFlex = 1,
-      this.hourFlex = 2});
+  /// Flex for the hours dropdown.
+  final int hourFlex;
+
+  /// Whether the widget uses a 24-hour clock.
+  final bool is24format;
 
   @override
   State<DropdownTimePicker> createState() => _DropdownTimePickerState();
 }
 
 class _DropdownTimePickerState extends State<DropdownTimePicker> {
-  var ampmSelVal = '';
-  var minSelVal = '';
-  var hourSelVal = '';
-  int ampmsIn = 32;
-  List<int> listOfHours = [];
+  late List<int> _hourOptions;
+  late String _ampmSelVal;
+  late String _minSelVal;
+  late String _hourSelVal;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the list of hours based on the format
-    listOfHours = widget.is24format ? list24Hours : listHours;
-
-    // Set the selected values for ampm, mins, and hours
-    ampmSelVal = widget.selectedAmPm?.toString() ?? '';
-    minSelVal = widget.selectedMins?.toString() ?? '';
-    hourSelVal = widget.selectedHours?.toString() ?? '';
+    _hourOptions = _buildHourOptions();
+    _ampmSelVal = _sanitizeAmPm(widget.selectedAmPm);
+    _minSelVal = _sanitizeIntSelection(widget.selectedMins, listMins);
+    _hourSelVal = _sanitizeIntSelection(widget.selectedHours, _hourOptions);
   }
 
-  ///Mins selection dropdown function
-  void minSelected(value) {
-    widget.onChangedMins!(value);
-    minSelVal = value;
-    update();
-  }
+  @override
+  void didUpdateWidget(covariant DropdownTimePicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
-  /// Check if the selected date is valid and update the state accordingly
-  void checkDates(ampms) {
-    // Check if the selected date is not null
-    if (minSelVal != '') {
-      // Check if the selected date is greater than the number of ampms
-      if (int.parse(minSelVal) > ampms) {
-        // If the selected date is greater than the number of ampms, clear the selected date
-        minSelVal = '';
-        widget.onChangedAmPm!('');
-        update();
+    final shouldRefreshHours = oldWidget.is24format != widget.is24format ||
+        oldWidget.startHours != widget.startHours ||
+        oldWidget.endHours != widget.endHours;
+
+    if (shouldRefreshHours) {
+      _hourOptions = _buildHourOptions();
+      if (!_isValidIntSelection(_hourSelVal, _hourOptions)) {
+        _hourSelVal = _sanitizeIntSelection(widget.selectedHours, _hourOptions);
       }
+    }
+
+    if (oldWidget.selectedHours != widget.selectedHours) {
+      _hourSelVal = _sanitizeIntSelection(widget.selectedHours, _hourOptions);
+    }
+
+    if (oldWidget.selectedMins != widget.selectedMins) {
+      _minSelVal = _sanitizeIntSelection(widget.selectedMins, listMins);
+    }
+
+    if (shouldRefreshHours || oldWidget.selectedAmPm != widget.selectedAmPm) {
+      _ampmSelVal = _sanitizeAmPm(widget.selectedAmPm);
     }
   }
 
-  /// Handle the selection of ampm dropdown
-  void ampmsSelected(value) {
-    widget.onChangedAmPm!(value);
-    update();
+  List<int> _buildHourOptions() {
+    final minimumHour = widget.is24format ? 0 : 1;
+    final maximumHour = widget.is24format ? 23 : 12;
+
+    final start =
+        _clamp(widget.startHours ?? minimumHour, minimumHour, maximumHour);
+    final end =
+        _clamp(widget.endHours ?? maximumHour, minimumHour, maximumHour);
+    final rangeStart = math.min(start, end);
+    final rangeEnd = math.max(start, end);
+
+    return List<int>.unmodifiable(
+      List<int>.generate(
+          rangeEnd - rangeStart + 1, (index) => rangeStart + index),
+    );
   }
 
-  /// Handle the selection of hours dropdown
-  void hoursSelected(value) {
-    widget.onChangedHours!(value);
-    hourSelVal = value;
-    update();
+  int _clamp(int value, int min, int max) {
+    return value.clamp(min, max).toInt();
   }
 
-  /// Update the state to trigger a rebuild of the widget
-  void update() {
-    setState(() {});
+  String _sanitizeAmPm(String? value) {
+    if (widget.is24format) {
+      return '';
+    }
+
+    final normalized = value?.trim().toUpperCase();
+    return normalized != null && listAmPm.contains(normalized)
+        ? normalized
+        : '';
+  }
+
+  String _sanitizeIntSelection(int? value, List<int> options) {
+    if (value == null || !options.contains(value)) {
+      return '';
+    }
+
+    return value.toString();
+  }
+
+  bool _isValidIntSelection(String value, List<int> options) {
+    final parsedValue = int.tryParse(value);
+    return parsedValue != null && options.contains(parsedValue);
+  }
+
+  void _updateMins(String? value) {
+    setState(() {
+      _minSelVal = value ?? '';
+    });
+    widget.onChangedMins?.call(value);
+  }
+
+  void _updateAmPm(String? value) {
+    setState(() {
+      _ampmSelVal = value ?? '';
+    });
+    widget.onChangedAmPm?.call(value);
+  }
+
+  void _updateHours(String? value) {
+    setState(() {
+      _hourSelVal = value ?? '';
+    });
+    widget.onChangedHours?.call(value);
   }
 
   @override
   Widget build(BuildContext context) {
+    final dropdowns = <Widget>[
+      if (widget.showHours)
+        Expanded(
+          flex: math.max(widget.hourFlex, 1),
+          child: _wrapDropdown(
+            child: _buildHoursDropdown(),
+          ),
+        ),
+      if (widget.showMins)
+        Expanded(
+          flex: math.max(widget.minFlex, 1),
+          child: _wrapDropdown(
+            child: _buildMinsDropdown(),
+          ),
+        ),
+      if (widget.showAmPm && !widget.is24format)
+        Expanded(
+          flex: math.max(widget.ampmFlex, 1),
+          child: _wrapDropdown(
+            child: _buildAmPmDropdown(),
+          ),
+        ),
+    ];
+
     return Row(
-      children: [
-        if (widget.showMins)
-          Expanded(
-            flex: widget.minFlex,
-            child: Container(
-              decoration: widget.boxDecoration ?? const BoxDecoration(),
-              child: SizedBox(
-                child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: widget.isDropdownHideUnderline
-                      ? DropdownButtonHideUnderline(
-                          child: hourDropdown(),
-                        )
-                      : hourDropdown(),
-                ),
-              ),
-            ),
-          ),
-        if (widget.showMins) w(widget.width),
-        if (widget.showAmPm)
-          Expanded(
-            flex: widget.ampmFlex,
-            child: Container(
-              decoration: widget.boxDecoration ?? const BoxDecoration(),
-              child: SizedBox(
-                  child: ButtonTheme(
-                alignedDropdown: true,
-                child: widget.isDropdownHideUnderline
-                    ? DropdownButtonHideUnderline(
-                        child: minDropdown(),
-                      )
-                    : minDropdown(),
-              )),
-            ),
-          ),
-        if (widget.showAmPm) w(widget.width),
-        if (widget.is24format == false)
-          Expanded(
-            flex: widget.hourFlex,
-            child: Container(
-              decoration: widget.boxDecoration ?? const BoxDecoration(),
-              child: SizedBox(
-                child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: widget.isDropdownHideUnderline
-                      ? DropdownButtonHideUnderline(
-                          child: ampmDropdown(),
-                        )
-                      : ampmDropdown(),
-                ),
-              ),
-            ),
-          ),
-      ],
+      children: _addSpacingBetweenDropdowns(dropdowns),
     );
   }
 
-  /// Dropdown for selecting minutes
-  DropdownButtonFormField<String> minDropdown() {
+  List<Widget> _addSpacingBetweenDropdowns(List<Widget> dropdowns) {
+    final spacedDropdowns = <Widget>[];
+    final spacing = widget.width < 0 ? 0.0 : widget.width;
+
+    for (var index = 0; index < dropdowns.length; index++) {
+      if (index > 0) {
+        spacedDropdowns.add(SizedBox(width: spacing));
+      }
+      spacedDropdowns.add(dropdowns[index]);
+    }
+
+    return spacedDropdowns;
+  }
+
+  Widget _wrapDropdown({required Widget child}) {
+    final dropdown = widget.isDropdownHideUnderline
+        ? DropdownButtonHideUnderline(child: child)
+        : child;
+
+    return Container(
+      decoration: widget.boxDecoration ?? const BoxDecoration(),
+      child: dropdown,
+    );
+  }
+
+  DropdownButtonFormField<String> _buildMinsDropdown() {
     return DropdownButtonFormField<String>(
-      decoration: widget.inputDecoration ??
-          (widget.isDropdownHideUnderline ? removeUnderline() : null),
+      key: ValueKey<String>('dropdown_timepicker.mins.$_minSelVal'),
+      decoration: _dropdownDecoration,
+      initialValue: _minSelVal.isEmpty ? null : _minSelVal,
       isExpanded: widget.isExpanded,
       hint: Text(widget.hintMins, style: widget.hintTextStyle),
       icon: widget.icon ?? const Icon(Icons.expand_more, color: Colors.grey),
-      value: minSelVal == '' ? null : minSelVal,
-      onChanged: (value) {
-        minSelected(value);
-      },
+      onChanged: _updateMins,
       validator: (value) {
-        return widget.isFormValidator && value == null
-            ? widget.errorMins
-            : null;
+        if (!widget.isFormValidator || !widget.showMins) {
+          return null;
+        }
+        return value == null ? widget.errorMins : null;
       },
-      items: listMins.map((item) {
-        return DropdownMenuItem<String>(
-          value: item.toString(),
-          child: Text(
-            item.toString(),
-            style: widget.textStyle ??
-                const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-          ),
-        );
-      }).toList(),
+      items: listMins
+          .map(
+            (item) => DropdownMenuItem<String>(
+              value: item.toString(),
+              child: Text(item.toString(), style: _defaultTextStyle),
+            ),
+          )
+          .toList(),
     );
   }
 
-  /// This function removes the underline from the dropdown by customizing the input decoration.
-  /// It returns an instance of InputDecoration with the enabled border set to an UnderlineInputBorder with white color.
-  InputDecoration removeUnderline() {
-    return const InputDecoration(
-        enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)));
-  }
-
-  ///hour dropdown
-  DropdownButtonFormField<String> hourDropdown() {
+  DropdownButtonFormField<String> _buildHoursDropdown() {
     return DropdownButtonFormField<String>(
-      decoration: widget.inputDecoration ??
-          (widget.isDropdownHideUnderline ? removeUnderline() : null),
+      key: ValueKey<String>('dropdown_timepicker.hours.$_hourSelVal'),
+      decoration: _dropdownDecoration,
+      initialValue: _hourSelVal.isEmpty ? null : _hourSelVal,
       hint: Text(widget.hintHours, style: widget.hintTextStyle),
       isExpanded: widget.isExpanded,
       icon: widget.icon ?? const Icon(Icons.expand_more, color: Colors.grey),
-      value: hourSelVal == '' ? null : hourSelVal,
-      onChanged: (value) {
-        hoursSelected(value);
-      },
+      onChanged: _updateHours,
       validator: (value) {
-        return widget.isFormValidator && value == null
-            ? widget.errorHours
-            : null;
+        if (!widget.isFormValidator || !widget.showHours) {
+          return null;
+        }
+        return value == null ? widget.errorHours : null;
       },
-      items: listOfHours.map((item) {
-        return DropdownMenuItem<String>(
-          value: item.toString(),
-          child: Text(
-            item.toString(),
-            style: widget.textStyle ??
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-        );
-      }).toList(),
+      items: _hourOptions
+          .map(
+            (item) => DropdownMenuItem<String>(
+              value: item.toString(),
+              child: Text(item.toString(), style: _defaultTextStyle),
+            ),
+          )
+          .toList(),
     );
   }
 
-  ///ampm dropdown
-  DropdownButtonFormField<String> ampmDropdown() {
+  DropdownButtonFormField<String> _buildAmPmDropdown() {
     return DropdownButtonFormField<String>(
-      decoration: widget.inputDecoration ??
-          (widget.isDropdownHideUnderline ? removeUnderline() : null),
+      key: ValueKey<String>('dropdown_timepicker.ampm.$_ampmSelVal'),
+      decoration: _dropdownDecoration,
+      initialValue: _ampmSelVal.isEmpty ? null : _ampmSelVal,
       hint: Text(widget.hintAmPm, style: widget.hintTextStyle),
       isExpanded: widget.isExpanded,
       icon: widget.icon ?? const Icon(Icons.expand_more, color: Colors.grey),
-      value: ampmSelVal == '' ? null : ampmSelVal,
-      onChanged: (value) {
-        ampmsSelected(value);
-      },
+      onChanged: _updateAmPm,
       validator: (value) {
-        return widget.isFormValidator && value == null
-            ? widget.errorAmPm
-            : null;
+        if (!widget.isFormValidator || !widget.showAmPm || widget.is24format) {
+          return null;
+        }
+        return value == null ? widget.errorAmPm : null;
       },
-      items: listAmPm.map((item) {
-        return DropdownMenuItem<String>(
-          value: item.toString(),
-          child: Text(
-            item.toString(),
-            style: widget.textStyle ??
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-        );
-      }).toList(),
+      items: listAmPm
+          .map(
+            (item) => DropdownMenuItem<String>(
+              value: item,
+              child: Text(item, style: _defaultTextStyle),
+            ),
+          )
+          .toList(),
     );
   }
 
-  /* This code creates a blank space that is count pixels wide. */
-  Widget w(double count) => SizedBox(width: count);
+  TextStyle get _defaultTextStyle {
+    return widget.textStyle ??
+        const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        );
+  }
+
+  InputDecoration? get _dropdownDecoration {
+    if (widget.inputDecoration != null) {
+      return widget.inputDecoration;
+    }
+
+    if (!widget.isDropdownHideUnderline) {
+      return null;
+    }
+
+    return const InputDecoration(
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      errorBorder: InputBorder.none,
+      focusedErrorBorder: InputBorder.none,
+    );
+  }
 }
